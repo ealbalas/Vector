@@ -89,22 +89,22 @@ public:
     {
     }
 
-    //
+    // add an element to end of array
     T &push_back(const T &element)
     {
     }
 
-    //
+    // remove an element from the back
     size_t pop_back()
     {
     }
 
-    //
+    // insert an element in a spot of the array
     T &insert(size_t index, const T &element)
     {
     }
 
-    //
+    // erase an element at a given index
     size_t erase(size_t index)
     {
     }
