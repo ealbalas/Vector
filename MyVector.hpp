@@ -41,29 +41,30 @@ public:
     // Destructor
     ~MyVector()
     {
-        delete[] elements_;
+        clear();
+        this->elements_ = nullptr;
     }
     /**************
      * Operators
      * ************/
 
     //	Assignment operator
-	MyVector& operator=(const MyVector& rhs) 
+    MyVector &operator=(const MyVector &rhs)
     {
-		if (this != &rhs)
-		{
-			reserve(rhs.capacity());
-			copyOther(rhs);
-			this->capacity_ = rhs.capacity();
-			this->size_ = rhs.size();
-			return *this;
-		}
+        if (this != &rhs)
+        {
+            reserve(rhs.capacity());
+            copyOther(rhs);
+            this->capacity_ = rhs.capacity();
+            this->size_ = rhs.size();
+            return *this;
+        }
     }
-	// Operator overload to at()
-	T& operator[](size_t index) const 
+    // Operator overload to at()
+    T &operator[](size_t index) const
     {
-		return at(index);			
-	}
+        return at(index);
+    }
 
     /**************
      * Accessors
@@ -84,13 +85,16 @@ public:
     // Check if vector is empty
     bool empty() const
     {
-        if (this->size_ == 0) return true;
+        if (this->size_ == 0)
+            return true;
+        return false;
     }
 
     // Get a value at given index
     T &at(size_t index) const
     {
-        if (index > this->size_) throw std::range_error("Gave index out of range.");
+        if (index > this->size_)
+            throw std::range_error("Gave index out of range.");
         T &value = this->elements_[index];
         return value;
     }
@@ -111,10 +115,19 @@ public:
         }
     }
 
+    // Shrink to fit capacity
+    void shrink_to_fit()
+    {
+        if (!empty())
+            if (this->size_ < this->capacity_)
+                this->capacity_ = this->size_;
+    }
+
     // Change specific index in array
     T &set(size_t index, const T &element)
     {
-        if (index >= capacity()) throw std::range_error("You have selected an invalid index");
+        if (index >= capacity())
+            throw std::range_error("You have selected an invalid index");
         this->elements_[index] = element;
         return this->at(index);
     }
@@ -131,7 +144,6 @@ public:
         auto lastIndex = this->size_ - 1;
         return at(lastIndex);
     }
-
 
     // add an element to end of array
     T &push_back(const T &element)
@@ -150,12 +162,12 @@ public:
     // insert an element in a spot of the array
     T &insert(size_t index, const T &element)
     {
-        if (this->size_ >= this->capacity_) reserve(2 * this->capacity_);
-        if (this->size_ < index) throw std::range_error("Invalid index");
+        if (this->size_ >= this->capacity_)
+            reserve(2 * this->capacity_);
+        if (this->size_ < index)
+            throw std::range_error("Invalid index");
         for (int i = this->size_; i != index; i--)
-        {
             elements_[i] = elements_[i - 1];
-        }
         elements_[index] = element;
         this->size_++;
         return elements_[index];
@@ -164,7 +176,8 @@ public:
     // erase an element at a given index
     size_t erase(size_t index)
     {
-        if(this->size_ <= index) throw std::range_error("Invalid index");
+        if (this->size_ <= index)
+            throw std::range_error("Invalid index");
         this->elements_[index].~T();
         for (int i = index; i < this->size_ - 1; i++)
         {
@@ -183,13 +196,11 @@ public:
         this->set(index2, value1);
     }
 
-    //
+    // iterate through whole array and call destructor on each element
     void clear()
     {
         for (int i = 0; i < this->size_; i++)
-        {
             elements_[i].~T();
-        }
         this->size_ = 0;
         this->capacity_ = 0;
     }
@@ -201,11 +212,6 @@ private:
     size_t capacity_ = 0;
     // Our internal array of element of type T. Starts off as nullptr
     T *elements_ = nullptr;
-
-    // Helper function for changing capacity
-    void changeCapacity(size_t c)
-    {
-    }
 
     // Helper function for copying array
     void copyOther(const MyVector &other)
