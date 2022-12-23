@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 // Creating a vector class. This will be a dynamically allocated array.
-
+// Will be using template to allow use of multiple types
 template <typename T>
 class MyVector
 {
@@ -14,9 +14,9 @@ public:
      * Constants
      * **********/
 
-    // Default capacity
+    // Default capacity. If no capacity is given this will be the default.
     static constexpr size_t DEFAULT_CAPACITY = 64;
-    // Minimum capacity
+    // Minimum capacity. This will be the minimum value for capacity
     static constexpr size_t MINIMUM_CAPACITY = 8;
 
     /***************************
@@ -28,9 +28,8 @@ public:
         : size_(),
           capacity_(capacity),
           elements_(new T[capacity]())
-    {
-    }
-    // Copy Constructor
+    {}
+    // Copy Constructor. This will be used to copy existing vector into new vectors. It will use the helper function to copy the values
     MyVector(const MyVector &other)
         : size_(other.size_),
           capacity_(other.capacity_),
@@ -38,17 +37,17 @@ public:
     {
         copyOther(other);
     }
-    // Destructor
+    // Destructor. This will call the clear function and set the elements_ to nullptr if its not already set.
     ~MyVector()
     {
         clear();
-        this->elements_ = nullptr;
+        if (this->elements_ != nullptr) this->elements_ = nullptr;
     }
     /**************
      * Operators
      * ************/
 
-    //	Assignment operator
+    //	Assignment operator. This will overload the '=' operator to set lhs vector equal to rhs vector.
     MyVector &operator=(const MyVector &rhs)
     {
         if (this != &rhs)
@@ -60,7 +59,7 @@ public:
             return *this;
         }
     }
-    // Operator overload to at()
+    // Operator overload to at(). This will allow us to use brackets to find item in array at given index.
     T &operator[](size_t index) const
     {
         return at(index);
@@ -70,27 +69,26 @@ public:
      * Accessors
      **************/
 
-    // Access the size of vector
+    // Access the size of vector. Since size_ is a private memeber we will have a function to access this value.
     size_t size() const
     {
         return this->size_;
     }
 
-    // Access the capacity of vector
+    // Access the capacity of vector. Since capacity_ is a private member we will have a function to access this value.
     size_t capacity() const
     {
         return this->capacity_;
     }
 
-    // Check if vector is empty
+    // Check if vector is empty. Create a function to check if vector is empty. Help clean up code.
     bool empty() const
     {
-        if (this->size_ == 0)
-            return true;
+        if (this->size_ == 0) return true;
         return false;
     }
 
-    // Get a value at given index
+    // Get a value at given index. Checks to make sure the index isnt out of range. if it isnt then we will pull item at this index.
     T &at(size_t index) const
     {
         if (index > this->size_)
@@ -99,7 +97,7 @@ public:
         return value;
     }
 
-    // Reserve capacity
+    // Reserve capacity. This function will help change the capacity after checking to make sure the current capacity doesnt have the necessary space.
     void reserve(size_t capacity)
     {
         if (this->capacity_ < capacity)
@@ -115,7 +113,7 @@ public:
         }
     }
 
-    // Shrink to fit capacity
+    // Shrink to fit capacity. This function can be used to shrink the current capacity so we dont save allocated memeory unnecessary 
     void shrink_to_fit()
     {
         if (!empty())
@@ -123,7 +121,7 @@ public:
                 this->capacity_ = this->size_;
     }
 
-    // Change specific index in array
+    // Change specific index in array. This will allow us change a value at a given index. this will happen at constant time.
     T &set(size_t index, const T &element)
     {
         if (index >= capacity())
@@ -132,34 +130,34 @@ public:
         return this->at(index);
     }
 
-    // First element of the array
+    // First element of the array. Returns a reference to the value in the front of the array.
     T &front()
     {
         return at(0);
     }
 
-    // Last element in the array
+    // Last element in the array. This returns a reference to the value in the end of the array
     T &end()
     {
         auto lastIndex = this->size_ - 1;
         return at(lastIndex);
     }
 
-    // add an element to end of array
+    // add an element to end of array. This function adds a value at the end of the array. Uses insert function.
     T &push_back(const T &element)
     {
         insert(this->size_, element);
         return this->elements_[this->size()];
     }
 
-    // remove an element from the back
+    // remove an element from the back. This function removes an element at the end of the array. Uses erase function.
     size_t pop_back()
     {
         erase(this->size_ - 1);
         return size();
     }
 
-    // insert an element in a spot of the array
+    // insert an element in a spot of the array. this will allow us to enter any element at any spot. This happens at O(n) since we will have to shift elements
     T &insert(size_t index, const T &element)
     {
         if (this->size_ >= this->capacity_)
@@ -173,7 +171,7 @@ public:
         return elements_[index];
     }
 
-    // erase an element at a given index
+    // erase an element at a given index. this will allow us to erase an element at any spot. this happens at O(n) since we will have to shift elements 
     size_t erase(size_t index)
     {
         if (this->size_ <= index)
@@ -187,7 +185,7 @@ public:
         return size();
     }
 
-    // swap function. swap the values of 2 elements with given index
+    // swap function. swap the values of 2 elements with given index. This will allow us swap 2 values with given index. This happens at O(1) since we know the locations of both values that need to be swapped.
     void swap(size_t index1, size_t index2)
     {
         auto value1 = this->at(index1);
